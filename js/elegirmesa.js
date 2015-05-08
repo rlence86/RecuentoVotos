@@ -5,11 +5,13 @@ function loadtable(tablebody){
 	while (rows.isValidRow()) {
 		var estado = "Sin datos";
 		var link = '<a href="rellenarmesa.html?distrito='+rows.fieldByName('idDistrito')+'&seccion='+rows.fieldByName('idSeccion')+'&mesa='+rows.fieldByName('idMesa')+'">Rellenar</a>';
-		if(rows.fieldByName('emitidos')>0){
+		var style = '';
+        if(rows.fieldByName('emitidos')>0){
 			estado = "OK";
 			link = '<a href="rellenarmesa.html?distrito='+rows.fieldByName('idDistrito')+'&seccion='+rows.fieldByName('idSeccion')+'&mesa='+rows.fieldByName('idMesa')+'">Modificar</a>';
-		}
-	    tablebody.append('<tr><td>'+rows.fieldByName('idDistrito')+'</td><td>'+rows.fieldByName('idSeccion')+'</td><td>'+rows.fieldByName('idMesa')+'</td><td>'+estado+'</td><td>'+link+'</td></tr>');
+		    style = 'style:"background:green;"';
+        }
+	    tablebody.append('<tr '+style+'><td>'+rows.fieldByName('idDistrito')+'</td><td>'+rows.fieldByName('idSeccion')+'</td><td>'+rows.fieldByName('idMesa')+'</td><td>'+estado+'</td><td>'+link+'</td></tr>');
 	    rows.next();    
 	}
 }

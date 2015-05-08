@@ -12,11 +12,25 @@
 		var dbfile = Ti.Filesystem.getFile(Ti.Filesystem.getApplicationDataDirectory(), 'recuento_votos.db');
 		return dbfile.exists();
 	}
+	function showResults(){
+		var db = Ti.Database.openFile(Ti.Filesystem.getFile(Ti.Filesystem.getApplicationDataDirectory(), 'recuento_votos.db'));
+		var rows = db.execute("SELECT idPartido, sum(numero_votos) as votos FROM Resultado GROUP BY idPartido");
+		while (rows.isValidRow()) {
+			alert("Partido "+rows.fieldByName('idPartido')+": "+rows.fieldByName('votos'));
+			rows.next();
+		}
+		var rows = db.execute("SELECT sum(blancos) as votos FROM Mesa");
+		while (rows.isValidRow()) {
+			alert("Votos blancos :"+rows.fieldByName('votos'));
+			rows.next();
+		}
+	}
 	$(document).ready(function(){
 		$("header").load("header.html");
 		if(installationOk()){
 			$("#boton_setup").hide(false);
 			printChart(null);
+			showResults();
 		} else {
 			$("#grafica_superior").hide(false);
 			$("#boton_add_resultado").hide(false);
