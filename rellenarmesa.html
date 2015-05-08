@@ -8,8 +8,22 @@
 <script src="js/highcharts.js"></script>
 <script src="js/printCharts.js"></script>
 <script>
+	function loadFormulario(){
+		var db = Ti.Database.openFile(Ti.Filesystem.getFile(
+                              Ti.Filesystem.getApplicationDataDirectory(), 'recuento_votos.db'));
+		var rows = db.execute("SELECT * FROM Partido");
+		while (rows.isValidRow()) {
+			$("#formulario").append('<div class="row"><div class="col-xs-6"><label for="'+rows.fieldByName('id')+'">'+rows.fieldByName('siglas')+'</label></div><div class="col-xs-6"><input type="text" name="'+rows.fieldByName('id')+'"/><div></div>');
+		    rows.next();    
+		}
+		$("#formulario").append('<div class="row"><div class="col-xs-6"><label for="blancos">Blancos</label></div><div class="col-xs-6"><input type="text" name="blancos"/><div></div>');
+		$("#formulario").append('<div class="row"><div class="col-xs-6"><label for="nulos">Nulos</label></div><div class="col-xs-6"><input type="text" name="nulos"/><div></div>');
+		$("#formulario").append('<div class="row"><div class="col-xs-6"><label for="emitidos">Emitidos</label></div><div class="col-xs-6"><input type="text" name="emitidos"/><div></div>');
+		$("#formulario").append('<input type="submit" value="Guardar"/>');
+	}
 	$(document).ready(function(){
 		$("header").load("header.html");
+		loadFormulario();
 	});
 </script>
 
@@ -21,6 +35,18 @@
 	<div class="container">
 		<div>
 			<a href="elegirmesa.html"><h2>Volver sin guardar</h2></a>
+		</div>
+		<div class="row">
+			<div class="col-xs-2">
+			</div>
+			<div class="col-xs-8">
+			<form action="">
+				<div id="formulario">
+				</div>
+			</form>
+			</div>
+			<div class="col-xs-2">
+			</div>
 		</div>
 		<div>
 			<a href="elegirmesa.html"><h2>Volver sin guardar</h2></a>
