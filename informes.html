@@ -6,11 +6,13 @@
 <script src="js/jquery-2.1.3.min.js"></script>
 <script src="js/bootstrap.min.js"></script>
 <script src="js/highcharts.js"></script>
+<script src="js/printCharts.js"></script>
 <script>
 	$(document).ready(function(){
 		$("header").load("header.html");
 		var db = getDatabase();
 		var chartdata = getChartData(db);
+		printBarChart(chartdata);
 	});
 	function getUrlParameter(sParam){
 	    var sPageURL = window.location.search.substring(1);
@@ -30,43 +32,75 @@
 	}
 	function getChartData(db){
 		var distrito = getUrlParameter('distrito');
+		var textodistrito = distrito;
+		if(!textodistrito){
+			textodistrito = "TODOS";
+		}
 		var seccion = getUrlParameter('seccion');
+		var textoseccion = seccion;
+		if(!textoseccion){
+			textoseccion = "TODAS";
+		}
 		var mesa = getUrlParameter('mesa');
+		var textomesa = mesa;
+		if(!textomesa){
+			textomesa = "TODAS";
+		}
+		var texto = "Distrito: "+textodistrito+" seccion: "+textoseccion+" mesa: "+textomesa;
+		$("#titulo").html("<p>"+texto+"</p>");
 		var chartData = calcData(db, distrito, seccion, mesa);
+		return chartData;
 	}
 	function calcData(db, distrito, seccion, mesa){
+		var lista_partidos = [];
+		var rows = db.execute("SELECT * from Partido");
+		while (rows.isValidRow()) {
+			lista_partidos.push({"id": rows.fieldByName('id'), "name": rows.fieldByName('siglas'), "color": rows.fieldByName('color'), "y": 0});
+			rows.next();
+		}
 		var query = "SELECT idPartido, sum(numero_votos) as votos FROM Resultado";
 		query = completeQuery(query, distrito, seccion, mesa);		
 		query +=  " GROUP BY idPartido";
-		var resultado_partidos = [];
 		var rows = db.execute(query);
 		while (rows.isValidRow()) {
-			votos_validos += parseInt(rows.fieldByName('votos'));
-			resultado_partidos.push({"partido": rows.fieldByName('idPartido'), "votos": parseInt(rows.fieldByName('votos'))});
+			$.each(lista_partidos, function(){
+				if($(this)[0].id == rows.fieldByName('idPartido')){
+					$(this)[0].y = parseInt(rows.fieldByName('votos'));
+				}
+			});
 			rows.next();
 		}
 		var query_blancos = "SELECT sum(blancos) as votos_blancos, sum(nulos) as votos_nulos, sum(emitidos) as votos_emitidos FROM Mesa";
 		query_blancos = completeQuery(query_blancos, distrito, seccion, mesa);
 		var rows = db.execute(query_blancos);
 		while (rows.isValidRow()) {
+			lista_partidos.push({"id": 0, "name": "Blancos", "color": "#FFFFFF", "y": parseInt(rows.fieldByName('votos_blancos'))});
+			lista_partidos.push({"id": 0, "name": "Nulos", "color": "#CCCCCC", "y": parseInt(rows.fieldByName('votos_nulos'))});
 			rows.next();
 		}
+		return lista_partidos;
 	}
 	function completeQuery(query, distrito, seccion, mesa){
+		var wherePuesto = false;
 		if(distrito){
-			query += " WHERE distritoID = '"+distrito+"'";
-		} else {
-			query += " WHERE 1";
+			query += " WHERE idDistrito = '"+distrito+"'";
+			wherePuesto = true;
 		}
 		if(seccion){
-			query += " AND seccionId = '"+seccion+"'";
-		} else {
-			query += " AND 1";
+			if(!wherePuesto) {
+				query += " WHERE idSeccion = '"+seccion+"'";
+				wherePuesto = true;
+			} else {
+				query += " AND idSeccion = '"+seccion+"'";
+			}
 		}
 		if(mesa){
-			query += " AND mesaId = '"+mesa+"'";
-		} else {
-			query += " AND 1";
+			if(!wherePuesto){
+				query += " WHERE idMesa = '"+mesa+"'";
+				wherePuesto = true;
+			} else {
+				query += " AND idMesa = '"+mesa+"'";
+			}			
 		}
 		return query;
 	}
@@ -83,6 +117,34 @@
 		<div id="titulo">
 		</div>
 		<div id="grafica_superior">
+		</div>
+		<div id="filtro" class="row">
+			<form action="informes.html" method="get">
+			<div class="col-xs-2">
+			</div>
+			<div class="row col-xs-8">
+				<div class="col-xs-4">
+					<label for="distrito">Distrito</label><br>
+					<input type="text" name="distrito" />
+				</div>
+				<div class="col-xs-4">
+					<label for="seccion">Seccion</label><br>
+					<input type="text" name="seccion" />
+				</div>
+				<div class="col-xs-4">
+					<label for="mesa">Mesa</label><br>
+					<input type="text" name="mesa" />
+				</div>
+				<div class="col-xs-12">
+					<br><br>
+					<center>
+						<input type="submit" value="Filtrar"/>
+					</center>
+				</div>
+			</div>
+			<div class="col-xs-2">
+			</div>
+			</form>
 		</div>
 	</div>
 </body>

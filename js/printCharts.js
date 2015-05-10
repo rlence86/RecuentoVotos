@@ -60,3 +60,60 @@ function printChart(values){
         }]
     });
 }
+function printBarChart(values){
+    $('#grafica_superior').highcharts({
+        chart: {
+            type: 'column'
+        },
+        title: {
+            text: 'Distribución de votos'
+        },
+        xAxis: {
+            type: 'category'
+        },
+        yAxis: {
+            title: {
+                text: 'Número de votos'
+            }
+        },
+        legend: {
+            enabled: false
+        },
+        plotOptions: {
+            column: {
+                dataLabels: {
+                    enabled: true,
+                    distance: -50,
+                    style: {
+                        fontWeight: 'bold',
+                        color: 'black',
+                        textShadow: '0px 1px 2px black'
+                    }
+                },
+                borderColor: "#000000",
+                startAngle: -90,
+                endAngle: 90,
+                showInLegend: true,
+                center: ['50%', '75%'],
+            },
+            series: {
+                states: {
+                    hover: {
+                        enabled: false
+                    }
+                }
+            }
+        },
+
+        tooltip: {
+                formatter: function() {
+                    return false;
+                }
+        },
+        series: [{
+            name: 'Brands',
+            colorByPoint: true,
+            data: values
+        }]
+    });
+}
