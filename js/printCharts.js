@@ -56,18 +56,7 @@ function printChart(values){
             type: 'pie',
             name: 'Escaños',
             innerSize: '50%',
-            data: [
-                {name: 'PP',
-                y: 10,
-                color: '#CCCCCC' },
-                {name: 'PSOE',
-                y: 3,
-                color: '#FFFFFF'},
-                {name: 'PPL',
-                y: 6,
-                color: '#B54FCC' }
-
-            ]
+            data: values
         }]
     });
 }

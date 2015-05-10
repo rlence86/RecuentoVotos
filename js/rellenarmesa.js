@@ -103,6 +103,20 @@ function saveVotosPartido(partido, votos, distrito, seccion, mesa, db) {
 function removePreData(distrito, seccion, mesa, db){
 	db.execute("DELETE FROM Resultado WHERE idDistrito='"+distrito+"' AND idSeccion='"+seccion+"' AND idMesa = '"+mesa+"'");
 }
+function vaciarMesa(){
+	var r = confirm("¿Quieres borrar los datos de esta mesa?");
+	if (r == true) {
+		var db = getDatabase();
+	    var distrito = getUrlParameter('distrito');
+		var seccion = getUrlParameter('seccion');
+		var mesa = getUrlParameter('mesa');
+		removePreData(distrito, seccion, mesa, db);
+		saveEmitidos(0, distrito, seccion, mesa, db);
+		saveBlancos(0, distrito, seccion, mesa, db);
+		saveNulos(0, distrito, seccion, mesa, db);
+		location.href = "elegirmesa.html";
+	}	
+}
 function saveData(input, distrito, seccion, mesa){
 	var db = getDatabase();
 	removePreData(distrito, seccion, mesa, db);
