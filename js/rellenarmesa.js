@@ -24,6 +24,7 @@ function getMesaData(db, distrito, seccion, mesa){
 				"blancos" : rows.fieldByName('blancos'),
 				"nulos"	  : rows.fieldByName('nulos'),
 				"emitidos": rows.fieldByName('emitidos'),
+				"censo"	  : rows.fieldByName('censo'),
 			};
 			var votosPartidos = db.execute("SELECT * FROM Resultado WHERE idDistrito = '"+distrito+"' and idSeccion = '"+seccion+"' and idMesa = '"+mesa+"'");
 			while (votosPartidos.isValidRow()){
@@ -34,6 +35,16 @@ function getMesaData(db, distrito, seccion, mesa){
 		}
 		rows.next();
 	}
+}
+function guardarCenso(){
+	var censo = $("input[name='censo']").val();
+	var db = getDatabase();
+    var distrito = getUrlParameter('distrito');
+	var seccion = getUrlParameter('seccion');
+	var mesa = getUrlParameter('mesa');
+	saveCenso(censo, distrito, seccion, mesa, db);
+	alert("Censo guardado "+distrito+"-"+seccion+"-"+mesa);
+	location.href = "elegirmesa.html";
 }
 function loadFormulario(db, data){		
 	var rows = db.execute("SELECT * FROM Partido");
@@ -97,6 +108,9 @@ function saveBlancos(votos, distrito, seccion, mesa, db) {
 function saveNulos(votos, distrito, seccion, mesa, db) {
 	db.execute("UPDATE Mesa SET nulos = '"+votos+"' WHERE idDistrito='"+distrito+"' AND idSeccion='"+seccion+"' AND idMesa = '"+mesa+"'");
 }
+function saveCenso(censo, distrito, seccion, mesa, db){
+	db.execute("UPDATE Mesa SET censo = '"+censo+"' WHERE idDistrito='"+distrito+"' AND idSeccion='"+seccion+"' AND idMesa = '"+mesa+"'");
+}
 function saveVotosPartido(partido, votos, distrito, seccion, mesa, db) {
 	db.execute("INSERT INTO Resultado VALUES('"+distrito+"', '"+seccion+"', '"+mesa+"', '"+partido+"', '"+votos+"')");
 }
@@ -134,6 +148,12 @@ function saveData(input, distrito, seccion, mesa){
 	alert("Guardado "+distrito+"-"+seccion+"-"+mesa);
 	location.href = "elegirmesa.html";
 }
+function loadCenso(distrito, seccion, mesa, db){
+	var rows = db.execute("SELECT * FROM Mesa WHERE idDistrito = '"+distrito+"' and idSeccion = '"+seccion+"' and idMesa = '"+mesa+"'");
+	while (rows.isValidRow()) {
+		return rows.fieldByName('censo');
+	}
+}
 $(document).ready(function(){
 	var db = getDatabase();
 	var distrito = getUrlParameter('distrito');
@@ -143,4 +163,6 @@ $(document).ready(function(){
 	$("header").load("header.html");
 	var mesaData = getMesaData(db,distrito,seccion,mesa);
 	loadFormulario(db, mesaData);
+	var censo = loadCenso(distrito, seccion, mesa, db);	
+	$("input[name='censo']").val(censo);
 });

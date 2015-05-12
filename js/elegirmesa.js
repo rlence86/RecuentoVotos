@@ -11,7 +11,7 @@ function loadtable(tablebody){
 			link = '<a href="rellenarmesa.html?distrito='+rows.fieldByName('idDistrito')+'&seccion='+rows.fieldByName('idSeccion')+'&mesa='+rows.fieldByName('idMesa')+'">Modificar</a>';
 		    style = 'style:"background:green;"';
         }
-	    tablebody.append('<tr '+style+'><td>'+rows.fieldByName('idDistrito')+'</td><td>'+rows.fieldByName('idSeccion')+'</td><td>'+rows.fieldByName('idMesa')+'</td><td>'+estado+'</td><td>'+link+'</td></tr>');
+	    tablebody.append('<tr '+style+'><td>'+rows.fieldByName('idDistrito')+'</td><td>'+rows.fieldByName('idSeccion')+'</td><td>'+rows.fieldByName('idMesa')+'</td><td>'+estado+'</td><td>'+rows.fieldByName('censo')+'</td><td>'+link+'</td></tr>');
 	    rows.next();    
 	}
 }

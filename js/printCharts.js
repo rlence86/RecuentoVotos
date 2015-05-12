@@ -86,8 +86,7 @@ function printBarChart(values){
                     distance: -50,
                     style: {
                         fontWeight: 'bold',
-                        color: 'black',
-                        textShadow: '0px 1px 2px black'
+                        color: 'black'
                     }
                 },
                 borderColor: "#000000",
